@@ -11,14 +11,15 @@
   import { toast } from "svelte-sonner";
   import { NavigateTo } from "$lib/utils/navigating";
   import { currentUser } from "$lib/stores/user-store";
-  import type { User } from "$lib/models/user";
+  import { User } from "$lib/models/user";
+  import billSetupStore from "$lib/stores/bill-setup-store";
 
   // 邀请成员
   // 设定角色
   // 设定权限 成员不可替其他人记账, 仅可查看.
 
   let newName = $state("");
-  let newMembers: { name: string, user?: User }[] = $state([]);
+  let newMembers: { name: string; user?: User }[] = $state([]);
   onMount(() => {
     if (!$currentUser) {
       showAlert("错误", "请先登录");
@@ -40,6 +41,18 @@
       toast.warning("哎呀, 一次性添加的成员太多了.稍后在成员管理页面再添加吧!");
       return;
     }
+    let members: BillMember[] = [];
+    newMembers.forEach(async (member: any) => {
+      let newMember = new BillMember(member.name, $billSetupStore);
+      await newMember.createToServer();
+      if (member.user) {
+        let user = new User(member.user.id, member.user.username);
+        newMember.bindUser(user);
+        await newMember.bindUserToServer();
+      }
+      members.push(newMember);
+      $billSetupStore.addNewMember(newMember);
+    });
     newMembers.push({ name: newName });
     newName = "";
   }

@@ -9,11 +9,13 @@
   import { billStore, currentBill } from "$lib/stores/bill-store";
   import { currentUser } from "$lib/stores/user-store";
   import { NavigateTo } from "$lib/utils/navigating";
+  import billSetupStore from "$lib/stores/bill-setup-store";
+
   export let step = 0;
 
   const NEXT = ["member", "../detail"];
   const PREV = ["", "common"];
-
+  
   async function checkNext() {
     if (step == 0) {
       let newBillData = localStorage.getItem("bill_current_setup_data");
@@ -21,50 +23,31 @@
         showAlert("错误", "请先填写账单信息");
         return;
       }
-    }
 
-    if (step == 1) {
-      let newBillData = localStorage.getItem("bill_current_setup_data");
-      let newBillMembers = localStorage.getItem("bill_current_setup_members");
-      if (!newBillData) {
-        showAlert("错误", "请先填写账单信息");
-        return;
-      }
-      if (!newBillMembers) {
-        showAlert("错误", "请先添加账单成员");
-        return;
-      }
-      let data = JSON.parse(newBillData);
-
-      let newBill = new Bill(
-        data.title,
+      let billData = JSON.parse(newBillData);
+      billSetupStore.set(new Bill(
+        billData.title,
         $currentUser!,
         [],
         [],
         new Date(),
         new Date(),
-        data.currency,
-        new Date(data.occured_at)
-      );
-      await newBill.createToServer();
+        billData.currency,
+        new Date(billData.occured_at)
+      ));
+      await $billSetupStore.createToServer();
+    }
 
+    if (step == 1) {
+      let newBillMembers = localStorage.getItem("bill_current_setup_members");
+      if (!newBillMembers) {
+        showAlert("错误", "请先添加账单成员");
+        return;
+      }
 
-      let members: BillMember[] = [];
-      JSON.parse(newBillMembers).forEach(async (member: any) => {
-        let newMember = new BillMember(member.name, newBill);
-        await newMember.createToServer();
-        if (member.user) {
-          let user = new User(member.user.id, member.user.username);
-          newMember.bindUser(user);
-          await newMember.bindUserToServer();
-        }
-        members.push(newMember);
-      });
-      newBill.members = members;
-      console.log("新建账单:", newBill);
-      billStore.addBill(newBill);
-      currentBill.set(newBill);
-
+      console.log("新建账单:", $billSetupStore);
+      billStore.addBill($billSetupStore);
+      currentBill.set($billSetupStore);
       NavigateTo(`/app/bill/detail`);
     }
     goto(`./${NEXT[step]}`, { replaceState: true });
