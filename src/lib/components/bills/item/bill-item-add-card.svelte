@@ -16,6 +16,7 @@
   import { BillItem } from "$lib/models/bill-item";
   import { showAlert } from "$lib/stores/alert-dialog-store";
   import type { BillMember } from "$lib/models/bill-member";
+  import { settings } from "$lib/modules/settings";
 
   let {
     title,
@@ -27,32 +28,9 @@
     bill: Bill | undefined;
   }>();
 
-  // 限制的 emoji 列表
-  const allowedEmojis = [
-    {
-      value: "😭",
-      label: "1",
-    },
-    {
-      value: "😂",
-      label: "2",
-    },
-    {
-      value: "😍",
-      label: "3",
-    },
-    {
-      value: "🤔",
-      label: "4",
-    },
-    {
-      value: "😎",
-      label: "5",
-    },
-  ];
 
   let bill_type = $state("");
-  let emoji = $state(allowedEmojis[0].value);
+  let emoji = $state($settings.billEmojis[0]);
   let description = $state("");
   let amount: number = $state(0);
   let occurred_time = $state(new Date().toLocaleString("sv-SE"));
@@ -140,8 +118,8 @@
           {emoji}
         </Select.Trigger>
         <Select.Content>
-          {#each allowedEmojis as e (e.label)}
-            <Select.Item value={e.value}>{e.value}</Select.Item>
+          {#each $settings.billEmojis as e (e)}
+            <Select.Item value={e}>{e}</Select.Item>
           {/each}
         </Select.Content>
       </Select.Root>

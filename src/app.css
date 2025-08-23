@@ -20,17 +20,14 @@
   font-style: normal;
 }
 
+
 html,
 body {
-  height: 100vh !important;
-  width: 100%;
-  margin: 0;
-  padding: 0;
+  padding-top: calc(var(--safe-area-inset-top) + 1rem);
   display: flex;
   flex-direction: column;
   scroll-behavior: smooth;
   overscroll-behavior: none;
-  user-select: none;
   font-family: "HarmonyOS SansSC", sans-serif;
 }
 
@@ -47,8 +44,9 @@ body {
   will-change: scroll-position;
 }
 
-
 :root {
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.13 0.028 261.692);

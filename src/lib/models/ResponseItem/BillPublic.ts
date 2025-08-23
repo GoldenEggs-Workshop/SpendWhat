@@ -12,7 +12,15 @@ export interface Response {
      * 创建时间
      */
     created_time: Date;
-    id: string;
+    /**
+     * 基础货币
+     */
+    currency: string;
+    /**
+     * 账单内汇率表
+     */
+    exchange_rates: BillExchangeRate[];
+    id:             string;
     /**
      * 更新时间
      */
@@ -39,6 +47,25 @@ export interface UserPublic {
      * 用户名
      */
     username: string;
+    [property: string]: any;
+}
+
+/**
+ * BillExchangeRate
+ */
+export interface BillExchangeRate {
+    /**
+     * 币种
+     */
+    currency: string;
+    /**
+     * 最后修改时间
+     */
+    last_modified?: Date;
+    /**
+     * 汇率，1次要汇率=x主汇率
+     */
+    rate: string;
     [property: string]: any;
 }
 

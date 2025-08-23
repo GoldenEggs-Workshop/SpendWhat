@@ -19,6 +19,7 @@
   } from "@internationalized/date";
   import Header from "../header.svelte";
   import { showAlert } from "$lib/stores/alert-dialog-store";
+  import { settings } from "$lib/modules/settings";
 
   // 账单名称
   // 设定货币种类
@@ -108,7 +109,7 @@
             <Command.Input placeholder="货币..." />
             <Command.List>
               <Command.Group value="members">
-                {#each Object.keys(currencies) as currency (currency)}
+                {#each $settings.defaultCurrencies as currency (currency)}
                   <Command.Item
                     value={currency}
                     onSelect={() => {
@@ -131,9 +132,9 @@
       </Popover.Root>
     </div>
 
-    <!-- 账单发生时间 -->
+    <!-- 账单开始时间 -->
     <div>
-      <Label class="block text-sm font-medium mb-1">账单发生时间</Label>
+      <Label class="block text-sm font-medium mb-1">开始时间</Label>
       <Popover.Root>
         <Popover.Trigger>
           {#snippet child({ props })}

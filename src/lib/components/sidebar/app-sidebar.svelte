@@ -23,17 +23,17 @@
   import Input from "../ui/input/input.svelte";
   import api from "$lib/utils/request";
   import { toast } from "svelte-sonner";
+  import Post from "$lib/utils/request";
 
   let token = $state("");
   let joinBillOpen = $state(false);
-
+  let sidebarOpen = $state(false);
   async function joinBill() {
     if (!token) return;
     let data = {
       token: token,
     };
-    api
-      .post("/app/bill/share/consume", data)
+    Post("/app/bill/share/consume", data)
       .then(async () => {
         joinBillOpen = false;
         token = "";
@@ -55,7 +55,7 @@
   </SearchDialog.Content>
 </SearchDialog.Root>
 
-<Sidebar.Root>
+<Sidebar.Root bind:open={sidebarOpen}>
   <Sidebar.Header>
     <Sidebar.Menu>
       <Sidebar.MenuItem>

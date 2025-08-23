@@ -17,11 +17,11 @@
   <Command.List>
     <Command.Empty>什么也没有...</Command.Empty>
     <Command.Group>
-      {#each items as item, i}
+      {#each items as item (item.value)}
         <Command.Item
           value={item}>
           <div class="flex justify-between">
-            <Input class="text-3xl w-10 p-0 pl-2 pr-2" bind:value={items[i]} maxlength={1}/>
+            <Input class="text-3xl p-0 pl-2 pr-2" bind:value={item.value} maxlength={1}/>
           </div>
           <Button class="ml-auto" variant="ghost">
             <Trash color="#e02e2e" strokeWidth={2} size={28} class="mr-2" />

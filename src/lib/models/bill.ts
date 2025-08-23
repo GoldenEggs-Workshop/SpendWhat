@@ -5,7 +5,10 @@ import { showAlert } from "$lib/stores/alert-dialog-store";
 import axios from "axios";
 import { BillMember } from "$lib/models/bill-member";
 import { BillRole } from "$lib/enum/roles";
-import type { BillMemberPublic, UserPublic } from "./ResponseItem/Public";
+import type { BillMemberPublic, UserPublic } from "./ResponseItem/BillPublic";
+import { getAllRate, getRate } from "$lib/utils";
+import { CurrencyRate } from "./rate";
+import { Currency } from "lucide-svelte";
 
 export class Bill {
   id?: string;
@@ -17,6 +20,8 @@ export class Bill {
   occurred_at: Date;
   item_updated_time: Date;
   currency: string;
+  rate?: CurrencyRate;
+  rate_last_modified?: Date;
 
   constructor(
     title: string,
@@ -63,6 +68,9 @@ export class Bill {
       const response = await Post("/bill/create", data);
       let responseData = await response.json();
       this.id = responseData.id;
+      let rates = await getAllRate(this.currency);
+      this.rate = new CurrencyRate(this.currency, rates[this.currency.toLocaleLowerCase()]);
+      console.log("获取汇率成功:", this.rate);
     } catch (error) {
       showAlert("错误", "账单创建失败.");
       console.error("账单创建失败:", error);

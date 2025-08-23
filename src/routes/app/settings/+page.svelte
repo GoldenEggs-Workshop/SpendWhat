@@ -4,15 +4,23 @@
   import Combobox from "$lib/components/ui/combox/combobox.svelte";
   import { Input } from "$lib/components/ui/input";
   import { Switch } from "$lib/components/ui/switch";
-  import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
   import { settings } from "$lib/modules/settings/settings";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
-  import * as Command from "$lib/components/ui/command/index.js";
   import CommandList from "$lib/components/ui/command-list/command-list.svelte";
-  import { languageCodes, convertToComboBox } from "$lib/modules/settings/util";
+  import { convertToComboBox } from "$lib/modules/settings/util";
+  import { testFunction } from "$lib/utils";
+  import { ComboBox } from "$lib/components/ui/combox";
+  import { currencies } from "$lib/models/currencies";
 
   let importDialog = $state(false);
   let emojiDialog = $state(false);
+  let currencyDialog = $state(false);
+
+  let defaultCurrenciesItems = $derived(
+    $settings.defaultCurrencies.map((c) => ({ value: c, label: c }))
+  );
+
+  let newCurrency = $state("");
 </script>
 
 <div class="space-y-3 pb-10 lg:max-w-4xl">
@@ -42,9 +50,8 @@
     <Button
       variant="outline"
       onclick={() => {
-        // emojiDialog = true;
-      }}
-      disabled={true}>设置货币</Button
+        currencyDialog = true;
+      }}>设置货币</Button
     >
   </SettingCard>
   <SettingCard
@@ -129,6 +136,10 @@
       }}>导出</Button
     >
   </SettingCard>
+  <div class="font-weight-bold text-xl font-bold">开发选项</div>
+  <SettingCard let:id title="测试" description="请勿触碰.">
+    <Button {id} variant="outline" onclick={testFunction}>测试</Button>
+  </SettingCard>
 </div>
 
 {#key importDialog}
@@ -155,6 +166,22 @@
     <Dialog.Content class="w-68">
       <Dialog.Title>设置表情</Dialog.Title>
       <!-- <CommandList bind:items={$settings.billEmojis} /> -->
+    </Dialog.Content>
+  </Dialog.Root>
+{/key}
+
+{#key currencyDialog}
+  <Dialog.Root bind:open={currencyDialog}>
+    <Dialog.Content class="w-68">
+      <Dialog.Title>添加货币</Dialog.Title>
+      <ComboBox
+        bind:value={newCurrency}
+        items={Object.entries(currencies).map(([code, data]) => ({
+          value: code,
+          label: code,
+        }))}
+      />
+      <CommandList bind:items={defaultCurrenciesItems} />
     </Dialog.Content>
   </Dialog.Root>
 {/key}

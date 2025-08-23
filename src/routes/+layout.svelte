@@ -10,7 +10,7 @@
   import { isBillPageNow } from "$lib/utils/navigating";
   import { onNavigate } from "$app/navigation";
   import { Toaster } from "$lib/components/ui/sonner/index.js";
-  import { initApp } from "$lib/utils";
+  import { cn, initApp } from "$lib/utils";
   const { children } = $props<{
     children: any;
   }>();
@@ -35,15 +35,15 @@
 <Toaster />
 
 <Sidebar.Provider
-  style="--sidebar-width: calc(var(--spacing) * 72); --header-height: calc(var(--spacing) * 12);"
+  style={cn("--sidebar-width: calc(var(--spacing) * 72); --header-height: calc(var(--spacing) * 12);")}
 >
   <AppSidebar />
   <Sidebar.Inset>
     <SiteHeader />
-    <div class="flex flex-1 flex-col">
+    <div class="flex flex-1 flex-col ">
       <div class="@container/main flex flex-1 flex-col gap-2">
         <div class="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <div class="px-4 lg:px-6">
+          <div class="px-4 lg:px-6 ">
             <main>
               {@render children?.()}
             </main>

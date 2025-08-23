@@ -20,14 +20,18 @@
 
   let newName = $state("");
   let newMembers: { name: string; user?: User }[] = $state([]);
-  onMount(() => {
+  onMount(async () => {
     if (!$currentUser) {
       showAlert("错误", "请先登录");
       toast.error("你是怎么到这里来的?");
       NavigateTo("/app/user/login");
       return;
     }
-
+    let newMember = new BillMember($currentUser.username, $billSetupStore);
+    await newMember.createToServer();
+    let user = new User($currentUser.id, $currentUser.username);
+    newMember.bindUser(user);
+    await newMember.bindUserToServer();
     newMembers.push({ name: $currentUser.username, user: $currentUser });
   });
 
